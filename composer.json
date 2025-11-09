@@ -1,0 +1,30 @@
+{
+    "name": "mahmudul/lara-enum",
+    "description": "Laravel custom enum utilities with attributes and helper methods.",
+    "type": "library",
+    "require": {
+        "php": "8.4",
+        "illuminate/support": "^13.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Mahmudul\\LaraEnum\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mahmudul\\LaraEnum\\LaraEnumServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Mahmudul Hasan",
+            "email": "mahmudul.bd.90@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
