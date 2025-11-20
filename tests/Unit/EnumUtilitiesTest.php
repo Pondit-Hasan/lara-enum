@@ -56,3 +56,12 @@ it('covers service provider methods', function (): void {
 
     expect(true)->toBeTrue();
 });
+
+it('builds  resource', function (): void {
+    $resource = SampleEnum::FIRST->asResource();
+
+    expect($resource)->toBe([
+        'label' => 'The First Value',
+        'value' => 'first',
+    ]);
+});
