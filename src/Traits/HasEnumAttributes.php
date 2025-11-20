@@ -51,6 +51,14 @@ trait HasEnumAttributes
         return $asArray ? $options->toArray() : $options;
     }
 
+    public function asResource(): array
+    {
+        return [
+            'label' => $this->label(),
+            'value' => $this->value,
+        ];
+    }
+
     protected static function getAttributeInstance(self $enum, string $attributeClass): ?object
     {
         $reflection = new ReflectionClassConstant(static::class, $enum->name);
