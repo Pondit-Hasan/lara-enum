@@ -65,3 +65,40 @@ it('builds  resource', function (): void {
         'value' => 'first',
     ]);
 });
+
+it('returns only specified cases', function (): void {
+    $only = SampleEnum::only([SampleEnum::FIRST, 'SECOND']);
+
+    expect($only)->toHaveCount(2)
+        ->and($only->first())->toBe(SampleEnum::FIRST)
+        ->and($only->last())->toBe(SampleEnum::SECOND);
+});
+
+it('returns all cases except specified ones', function (): void {
+    $except = SampleEnum::except([SampleEnum::FIRST, 'second']);
+
+    expect($except)->toHaveCount(1)
+        ->and($except->first())->toBe(SampleEnum::THIRD);
+});
+
+it('supports piping except to asOptions', function (): void {
+    $options = SampleEnum::except(['first'])->asOptions();
+
+    expect($options)->toBeInstanceOf(Collection::class)
+        ->toHaveCount(2)
+        ->and($options->toArray())->toBe([
+            ['label' => 'Second', 'value' => 'second'],
+            ['label' => __('enums.sample.third'), 'value' => 'third'],
+        ]);
+});
+
+it('supports piping only to asOptions', function (): void {
+    $options = SampleEnum::only(['first', 'second'])->asOptions();
+
+    expect($options)->toBeInstanceOf(Collection::class)
+        ->toHaveCount(2)
+        ->and($options->toArray())->toBe([
+            ['label' => 'The First Value', 'value' => 'first'],
+            ['label' => 'Second', 'value' => 'second'],
+        ]);
+});
