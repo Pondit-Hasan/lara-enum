@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Mahmudul\LaraEnum\Attributes\Description;
 use Mahmudul\LaraEnum\Attributes\Translatable;
+use Mahmudul\LaraEnum\EnumCollection;
 use ReflectionClassConstant;
 
 trait HasEnumAttributes
@@ -32,7 +33,8 @@ trait HasEnumAttributes
 
     public static function values(bool $asArray = false): Collection|array
     {
-        $values = collect(static::cases())->pluck('value');
+        $values = new EnumCollection(static::cases());
+        $values = $values->pluck('value');
 
         return $asArray ? $values->toArray() : $values;
     }
@@ -42,13 +44,31 @@ trait HasEnumAttributes
         string $valueKey = 'value',
         bool $asArray = false
     ): Collection|array {
-        $options = collect(static::cases())
-            ->map(fn (self $enum) => [
-                $labelKey => $enum->label(),
-                $valueKey => $enum->value,
-            ]);
+        $options = (new EnumCollection(static::cases()))->asOptions($labelKey, $valueKey);
 
         return $asArray ? $options->toArray() : $options;
+    }
+
+    public static function except(array $cases): Collection
+    {
+        $caseValues = array_map(
+            fn ($c) => $c instanceof \BackedEnum ? $c->value : $c,
+            $cases
+        );
+
+        return (new EnumCollection(static::cases()))
+            ->reject(fn ($case) => in_array($case->name, $caseValues) || in_array($case->value, $caseValues));
+    }
+
+    public static function only(array $cases): Collection
+    {
+        $caseValues = array_map(
+            fn ($c) => $c instanceof \BackedEnum ? $c->value : $c,
+            $cases
+        );
+
+        return (new EnumCollection(static::cases()))
+            ->filter(fn ($case) => in_array($case->name, $caseValues) || in_array($case->value, $caseValues));
     }
 
     public function asResource(): array
