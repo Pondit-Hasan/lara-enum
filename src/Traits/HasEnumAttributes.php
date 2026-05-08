@@ -2,7 +2,6 @@
 
 namespace Mahmudul\LaraEnum\Traits;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Mahmudul\LaraEnum\Attributes\Description;
 use Mahmudul\LaraEnum\Attributes\Translatable;
@@ -31,7 +30,7 @@ trait HasEnumAttributes
         return Str::headline($enum->value);
     }
 
-    public static function values(bool $asArray = false): Collection|array
+    public static function values(bool $asArray = false): EnumCollection|array
     {
         $values = new EnumCollection(static::cases());
         $values = $values->pluck('value');
@@ -43,31 +42,31 @@ trait HasEnumAttributes
         string $labelKey = 'label',
         string $valueKey = 'value',
         bool $asArray = false
-    ): Collection|array {
-        $options = (new EnumCollection(static::cases()))->asOptions($labelKey, $valueKey);
+    ): EnumCollection|array {
+        $options = new EnumCollection(static::cases())->asOptions($labelKey, $valueKey);
 
         return $asArray ? $options->toArray() : $options;
     }
 
-    public static function except(array $cases): Collection
+    public static function except(array $cases): EnumCollection
     {
         $caseValues = array_map(
             fn ($c) => $c instanceof \BackedEnum ? $c->value : $c,
             $cases
         );
 
-        return (new EnumCollection(static::cases()))
+        return new EnumCollection(static::cases())
             ->reject(fn ($case) => in_array($case->name, $caseValues) || in_array($case->value, $caseValues));
     }
 
-    public static function only(array $cases): Collection
+    public static function only(array $cases): EnumCollection
     {
         $caseValues = array_map(
             fn ($c) => $c instanceof \BackedEnum ? $c->value : $c,
             $cases
         );
 
-        return (new EnumCollection(static::cases()))
+        return new EnumCollection(static::cases())
             ->filter(fn ($case) => in_array($case->name, $caseValues) || in_array($case->value, $caseValues));
     }
 
